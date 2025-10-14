@@ -7,11 +7,18 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const error = searchParams.get('error');
 
+  console.log('=== GOOGLE OAUTH CALLBACK ===');
+  console.log('Code:', code ? 'Present' : 'Missing');
+  console.log('Error:', error);
+  console.log('Request URL:', request.url);
+
   if (error) {
+    console.log('OAuth error:', error);
     return NextResponse.redirect(new URL('/?error=access_denied', request.url));
   }
 
   if (!code) {
+    console.log('No code received');
     return NextResponse.redirect(new URL('/?error=no_code', request.url));
   }
 
@@ -82,6 +89,9 @@ export async function GET(request: NextRequest) {
     // Get the base URL from environment or request
     const baseUrl = process.env.NEXTAUTH_URL || request.url.split('/api')[0];
     
+    console.log('Base URL:', baseUrl);
+    console.log('NEXTAUTH_URL:', process.env.NEXTAUTH_URL);
+    
     // Create response and set tokens
     const redirectUrl = new URL('/home', baseUrl);
     redirectUrl.searchParams.set('token', accessToken);
@@ -92,6 +102,9 @@ export async function GET(request: NextRequest) {
       name: dbUser.name,
       avatarUrl: dbUser.avatarUrl,
     }));
+    
+    console.log('Redirect URL:', redirectUrl.toString());
+    console.log('User:', dbUser.email);
     
     const response = NextResponse.redirect(redirectUrl);
     
@@ -112,6 +125,9 @@ export async function GET(request: NextRequest) {
       path: '/',
     });
 
+    console.log('Cookies set successfully');
+    console.log('========================');
+    
     return response;
   } catch (error) {
     console.error('Google OAuth error:', error);
