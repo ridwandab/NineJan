@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
     const currentUser = await getCurrentUser(request);
@@ -12,8 +12,9 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { username } = await params;
     const targetUser = await prisma.user.findUnique({
-      where: { username: params.username },
+      where: { username },
     });
 
     if (!targetUser) {

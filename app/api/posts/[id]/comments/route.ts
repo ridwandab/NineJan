@@ -9,11 +9,12 @@ const commentSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const comments = await prisma.comment.findMany({
-      where: { postId: params.id },
+      where: { postId: id },
       include: {
         author: {
           select: {
@@ -41,7 +42,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser(request);
@@ -49,11 +50,12 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const { content } = commentSchema.parse(body);
 
     const post = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!post) {
@@ -66,7 +68,7 @@ export async function POST(
     const comment = await prisma.comment.create({
       data: {
         authorId: user.userId,
-        postId: params.id,
+        postId: id,
         content,
       },
       include: {
@@ -89,7 +91,7 @@ export async function POST(
           type: 'comment',
           data: JSON.stringify({
             userId: user.userId,
-            postId: params.id,
+            postId: id,
             commentId: comment.id,
           }),
         },

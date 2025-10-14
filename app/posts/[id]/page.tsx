@@ -6,21 +6,30 @@ import { getPost, addComment, likePost } from '@/lib/api';
 import Navigation from '@/components/layout/Navigation';
 import Image from 'next/image';
 
-export default function PostPage({ params }: { params: { id: string } }) {
+export default function PostPage({ params }: { params: Promise<{ id: string }> }) {
   const [post, setPost] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [postId, setPostId] = useState<string>('');
   const router = useRouter();
 
   useEffect(() => {
-    loadPost();
-  }, [params.id]);
+    params.then(({ id }) => {
+      setPostId(id);
+    });
+  }, [params]);
+
+  useEffect(() => {
+    if (postId) {
+      loadPost();
+    }
+  }, [postId]);
 
   const loadPost = async () => {
     try {
-      const postData = await getPost(params.id);
+      const postData = await getPost(postId);
       setPost(postData);
       setComments(postData.comments || []);
     } catch (error) {
@@ -36,7 +45,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
 
     setSubmitting(true);
     try {
-      const comment = await addComment(params.id, newComment);
+      const comment = await addComment(postId, newComment);
       setComments([comment, ...comments]);
       setNewComment('');
     } catch (error) {

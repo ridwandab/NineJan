@@ -6,20 +6,29 @@ import { getUser, followUser } from '@/lib/api';
 import Navigation from '@/components/layout/Navigation';
 import PostCard from '@/components/feed/PostCard';
 
-export default function ProfilePage({ params }: { params: { username: string } }) {
+export default function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const [user, setUser] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [following, setFollowing] = useState(false);
+  const [username, setUsername] = useState<string>('');
   const router = useRouter();
 
   useEffect(() => {
-    loadProfile();
-  }, [params.username]);
+    params.then(({ username }) => {
+      setUsername(username);
+    });
+  }, [params]);
+
+  useEffect(() => {
+    if (username) {
+      loadProfile();
+    }
+  }, [username]);
 
   const loadProfile = async () => {
     try {
-      const userData = await getUser(params.username);
+      const userData = await getUser(username);
       setUser(userData);
       
       // Load user's posts
@@ -34,7 +43,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
 
   const handleFollow = async () => {
     try {
-      await followUser(params.username);
+      await followUser(username);
       setFollowing(!following);
     } catch (error) {
       console.error('Failed to follow/unfollow:', error);

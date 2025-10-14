@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser(request);
@@ -12,8 +12,9 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const post = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!post) {
@@ -28,7 +29,7 @@ export async function POST(
       where: {
         userId_postId: {
           userId: user.userId,
-          postId: params.id,
+          postId: id,
         },
       },
     });
@@ -39,7 +40,7 @@ export async function POST(
         where: {
           userId_postId: {
             userId: user.userId,
-            postId: params.id,
+            postId: id,
           },
         },
       });
@@ -50,7 +51,7 @@ export async function POST(
       await prisma.like.create({
         data: {
           userId: user.userId,
-          postId: params.id,
+          postId: id,
         },
       });
 
@@ -62,7 +63,7 @@ export async function POST(
             type: 'like',
             data: JSON.stringify({
               userId: user.userId,
-              postId: params.id,
+              postId: id,
             }),
           },
         });
