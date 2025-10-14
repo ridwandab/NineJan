@@ -79,26 +79,11 @@ export async function GET(request: NextRequest) {
     const accessToken = generateAccessToken({ userId: dbUser.id, email: dbUser.email });
     const refreshToken = generateRefreshToken({ userId: dbUser.id, email: dbUser.email });
 
-    // Create response and set tokens
-    const response = NextResponse.redirect(new URL('/feed', request.url));
+    // Get the base URL from environment or request
+    const baseUrl = process.env.NEXTAUTH_URL || request.url.split('/api')[0];
     
-    // Set tokens in cookies
-    response.cookies.set('ninejan_token', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60, // 1 hour
-    });
-
-    response.cookies.set('ninejan_refresh', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-
-    // Store user info in localStorage via client-side redirect
-    const redirectUrl = new URL('/feed', request.url);
+    // Create response and set tokens
+    const redirectUrl = new URL('/feed', baseUrl);
     redirectUrl.searchParams.set('token', accessToken);
     redirectUrl.searchParams.set('user', JSON.stringify({
       id: dbUser.id,
@@ -107,8 +92,27 @@ export async function GET(request: NextRequest) {
       name: dbUser.name,
       avatarUrl: dbUser.avatarUrl,
     }));
+    
+    const response = NextResponse.redirect(redirectUrl);
+    
+    // Set tokens in cookies
+    response.cookies.set('ninejan_token', accessToken, {
+      httpOnly: true,
+      secure: true, // Always use secure in production
+      sameSite: 'lax',
+      maxAge: 60 * 60, // 1 hour
+      path: '/',
+    });
 
-    return NextResponse.redirect(redirectUrl);
+    response.cookies.set('ninejan_refresh', refreshToken, {
+      httpOnly: true,
+      secure: true, // Always use secure in production
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: '/',
+    });
+
+    return response;
   } catch (error) {
     console.error('Google OAuth error:', error);
     return NextResponse.redirect(new URL('/?error=oauth_failed', request.url));
