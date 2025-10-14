@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { signIn } from 'next-auth/react';
 import { prisma } from '@/lib/prisma';
 import { generateAccessToken, generateRefreshToken } from '@/lib/auth';
 
