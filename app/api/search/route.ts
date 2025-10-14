@@ -17,8 +17,8 @@ export async function GET(request: NextRequest) {
     const users = await prisma.user.findMany({
       where: {
         OR: [
-          { username: { contains: query, mode: 'insensitive' } },
-          { name: { contains: query, mode: 'insensitive' } },
+          { username: { contains: query } },
+          { name: { contains: query } },
         ],
       },
       select: {
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     // Search posts
     const posts = await prisma.post.findMany({
       where: {
-        content: { contains: query, mode: 'insensitive' },
+        content: { contains: query },
       },
       include: {
         author: {
