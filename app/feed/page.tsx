@@ -14,6 +14,20 @@ export default function FeedPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Check for token in URL params (from OAuth redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenParam = urlParams.get('token');
+    const userParam = urlParams.get('user');
+
+    if (tokenParam && userParam) {
+      // Save token and user info to localStorage
+      localStorage.setItem('ninejan_token', tokenParam);
+      localStorage.setItem('ninejan_user', userParam);
+      
+      // Remove token and user from URL
+      window.history.replaceState({}, '', '/feed');
+    }
+
     const token = localStorage.getItem('ninejan_token');
     if (!token) {
       router.push('/');
