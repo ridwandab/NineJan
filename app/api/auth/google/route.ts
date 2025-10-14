@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
     const baseUrl = process.env.NEXTAUTH_URL || request.url.split('/api')[0];
     
     // Create response and set tokens
-    const redirectUrl = new URL('/feed', baseUrl);
+    const redirectUrl = new URL('/home', baseUrl);
     redirectUrl.searchParams.set('token', accessToken);
     redirectUrl.searchParams.set('user', JSON.stringify({
       id: dbUser.id,
