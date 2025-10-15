@@ -40,7 +40,11 @@ export async function GET(request: NextRequest) {
 
     const tokens = await tokenResponse.json();
 
+    console.log('Token response status:', tokenResponse.status);
+    console.log('Token response:', JSON.stringify(tokens, null, 2));
+
     if (!tokens.access_token) {
+      console.error('No access token in response:', tokens);
       throw new Error('Failed to get access token');
     }
 
