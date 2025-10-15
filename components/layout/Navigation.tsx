@@ -40,11 +40,14 @@ export default function Navigation() {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <a href="/home" className="flex items-center">
-                <img 
-                  src="/NineJan logo.png" 
-                  alt="NineJan Logo" 
-                  className="h-16 w-auto"
-                />
+                <div className="flex items-center bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 rounded-lg">
+                  <img 
+                    src="/NineJan logo.png" 
+                    alt="NineJan Logo" 
+                    className="h-12 w-auto mr-3"
+                  />
+                  <span className="text-white font-bold text-xl">NineJan</span>
+                </div>
               </a>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
