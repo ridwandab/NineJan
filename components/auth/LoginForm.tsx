@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/lib/api';
-import GoogleLoginButton from './GoogleLoginButton';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -21,7 +20,7 @@ export default function LoginForm() {
       const response = await login(email, password);
       localStorage.setItem('ninejan_token', response.accessToken);
       localStorage.setItem('ninejan_user', JSON.stringify(response.user));
-      router.push('/feed');
+      router.push('/home');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {
@@ -38,18 +37,6 @@ export default function LoginForm() {
           {error}
         </div>
       )}
-
-      {/* Google Login Button */}
-      <GoogleLoginButton />
-
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">Or continue with email</span>
-        </div>
-      </div>
 
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
