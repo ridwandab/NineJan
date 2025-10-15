@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "NineJan - Social Media App",
   description: "A modern social media platform",
+  icons: {
+    icon: '/NineJan logo.png',
+  },
 };
 
 export default function RootLayout({
@@ -16,6 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/NineJan logo.png" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );

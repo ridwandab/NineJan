@@ -39,7 +39,13 @@ export default function Navigation() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <h1 className="text-2xl font-bold text-primary-600">NineJan</h1>
+              <a href="/home" className="flex items-center">
+                <img 
+                  src="/NineJan logo.png" 
+                  alt="NineJan Logo" 
+                  className="h-10 w-auto"
+                />
+              </a>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navItems.map((item) => (
